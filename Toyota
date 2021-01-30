@@ -1,0 +1,18 @@
+ToyotaCorolla <- fread("ToyotaCorolla.csv")
+
+setkey(ToyotaCorolla, Id)
+
+Corolla <- ToyotaCorolla[, c('Price','Age_08_04','KM','HP','cc','Doors','Gears','Quarterly_Tax','Weight')]
+
+Corolla_Model <- lm(Price ~ Age_08_04+KM+HP+cc+Doors+Gears+Quarterly_Tax+Weight,data = Corolla)
+
+summary(Corolla_Model)
+
+vif(Corolla_Model)
+
+avPlots(Corolla_Model)
+
+stepAIC(Corolla_Model)
+
+Corolla_Model_final <- lm(Price ~ Age_08_04+KM+HP+log(cc)+Gears+Quarterly_Tax+Weight,data = Corolla)
+summary(Corolla_Model_final)

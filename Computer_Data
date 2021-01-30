@@ -1,0 +1,38 @@
+# Read data from file
+library(data.table)
+Computer_Data <- fread("Computer_Data.csv")
+colnames(Computer_Data)
+str(Computer_Data)
+
+# Creating Dummy Variable
+
+Computer_Data$cd_dummy1 <- ifelse(Computer_Data$cd=="yes",1,0)
+Computer_Data$multi_dummy1 <- ifelse(Computer_Data$multi=='yes',1,0)
+Computer_Data$premium_dummy1 <- ifelse(Computer_Data$premium=='yes',1,0)
+
+Computer_Data$cd_dummy2 <- ifelse(Computer_Data$cd=='no',1,0)
+Computer_Data$multi_dummy2 <- ifelse(Computer_Data$multi=='no',1,0)
+Computer_Data$premium_dummy2 <- ifelse(Computer_Data$premium=='no',1,0)
+
+comp_data <- (Computer_Data[,-c('V1','cd','multi','premium')])
+
+str(comp_data)
+summary(comp_data)
+
+#Creating first model
+colnames(comp_data)
+attach(comp_data)
+
+comp_model <- lm(price ~ speed+hd+ram+screen+ads+trend+cd_dummy1+multi_dummy1+premium_dummy1, data = comp_data)
+summary(comp_model)
+
+influenceIndexPlot(comp_model, id.n=3)
+library(car)
+avPlots(comp_model)
+
+library(MASS)
+vif(comp_model)
+stepAIC(comp_model)
+
+comp_model_final <- lm(price ~ speed+hd+ram+screen+ads+trend+cd_dummy1+multi_dummy1+premium_dummy1, data = comp_data)
+summary(comp_model_final)
